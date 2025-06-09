@@ -1,7 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using TMS.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=tasks.db"));
 
 var app = builder.Build();
 
