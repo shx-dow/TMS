@@ -20,7 +20,7 @@ namespace TMS.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.5");
 
-            modelBuilder.Entity("TaskManager.Models.TaskItem", b =>
+            modelBuilder.Entity("TMS.Models.TaskItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

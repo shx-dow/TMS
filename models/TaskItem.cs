@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace TaskManager.Models
+namespace TMS.Models
 {
     public enum PriorityLevel
     {

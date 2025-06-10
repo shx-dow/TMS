@@ -1,29 +1,39 @@
-using System;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using TMS.Models;
 using TMS.Data;
-using TaskManager.Models;
+using Microsoft.AspNetCore.Mvc;
 
-namespace TMS.Pages_Tasks
+namespace TMS.Pages.Tasks
 {
     public class IndexModel : PageModel
     {
-        private readonly TMS.Data.AppDbContext _context;
+        private readonly AppDbContext _context;
 
-        public IndexModel(TMS.Data.AppDbContext context)
+        public IndexModel(AppDbContext context)
         {
             _context = context;
         }
 
-        public IList<TaskItem> TaskItem { get;set; } = default!;
+        public IList<TaskItem> TaskItem { get; set; } = default!;
+
+        [BindProperty(SupportsGet = true)]
+        public string? SearchString { get; set; }
 
         public async Task OnGetAsync()
         {
-            TaskItem = await _context.Tasks.ToListAsync();
+            var tasks = from t in _context.Tasks
+                        select t;
+
+            if (!string.IsNullOrEmpty(SearchString))
+            {
+                tasks = tasks.Where(t => t.Title!.Contains(SearchString));
+            }
+
+            TaskItem = await tasks.ToListAsync();
         }
     }
 }

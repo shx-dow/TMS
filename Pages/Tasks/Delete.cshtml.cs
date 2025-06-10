@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using TMS.Data;
-using TaskManager.Models;
+using TMS.Models;
 
 namespace TMS.Pages_Tasks
 {

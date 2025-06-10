@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using TaskManager.Models;
+using TMS.Models;
 
 namespace TMS.Data
 {
