@@ -21,5 +21,7 @@ namespace TMS.Models
 
         // Optional: User name or role who added the update
         public string? UpdatedBy { get; set; }
+
+        public string? content {get; set; } = string.Empty;
     }
 }

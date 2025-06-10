@@ -20,6 +20,10 @@ namespace TMS.Pages_Tasks
         }
 
         public TaskItem TaskItem { get; set; } = default!;
+        public List<TaskUpdate> TaskUpdates { get; set; } = new();
+
+        [BindProperty]
+        public TaskUpdate NewUpdate { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -36,8 +40,23 @@ namespace TMS.Pages_Tasks
 
                 return Page();
             }
-
             return NotFound();
+        }
+
+        public async Task<IActionResult> OnPostAddUpdateAsync(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            NewUpdate.TaskItemId = id.Value;
+            NewUpdate.Timestamp = DateTime.Now;
+
+            _context.TaskUpdates.Add(NewUpdate);
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage(new { id = id });
         }
     }
 }
