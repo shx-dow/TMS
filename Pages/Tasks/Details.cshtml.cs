@@ -12,9 +12,9 @@ namespace TMS.Pages_Tasks
 {
     public class DetailsModel : PageModel
     {
-        private readonly TMS.Data.AppDbContext _context;
+        private readonly AppDbContext _context;
 
-        public DetailsModel(TMS.Data.AppDbContext context)
+        public DetailsModel(AppDbContext context)
         {
             _context = context;
         }
@@ -28,27 +28,27 @@ namespace TMS.Pages_Tasks
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var taskitem = await _context.Tasks.FirstOrDefaultAsync(m => m.Id == id);
+            TaskItem? taskitem = await _context.Tasks
+                .Include(t => t.Updates)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (taskitem is not null)
-            {
-                TaskItem = taskitem;
+            if (taskitem == null)
+                return NotFound();
 
-                return Page();
-            }
-            return NotFound();
+            TaskItem = taskitem;
+            TaskUpdates = taskitem.Updates
+                .OrderByDescending(u => u.Timestamp)
+                .ToList();
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAddUpdateAsync(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null || string.IsNullOrWhiteSpace(NewUpdate.content))
+                return RedirectToPage(new { id });
 
             NewUpdate.TaskItemId = id.Value;
             NewUpdate.Timestamp = DateTime.Now;
@@ -56,7 +56,7 @@ namespace TMS.Pages_Tasks
             _context.TaskUpdates.Add(NewUpdate);
             await _context.SaveChangesAsync();
 
-            return RedirectToPage(new { id = id });
+            return RedirectToPage(new { id }); // Refresh to show new update
         }
     }
 }

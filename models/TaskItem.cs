@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace TMS.Models
 {
@@ -25,5 +26,7 @@ namespace TMS.Models
         public bool IsComplete { get; set; }
 
         public PriorityLevel Priority { get; set; }
+
+        public List<TaskUpdate> Updates { get; set; } = new();
     }
 }
