@@ -11,5 +11,6 @@ namespace TMS.Data
         }
 
         public DbSet<TaskItem> Tasks { get; set; }
+        public DbSet<TaskUpdate> TaskUpdates { get; set; }
     }
 }
