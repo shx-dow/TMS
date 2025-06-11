@@ -12,39 +12,58 @@ namespace TMS.Pages_Tasks
 {
     public class DetailsModel : PageModel
     {
-        private readonly TMS.Data.AppDbContext _context;
+        private readonly AppDbContext _context;
 
-        public DetailsModel(TMS.Data.AppDbContext context)
+        public DetailsModel(AppDbContext context)
         {
             _context = context;
         }
 
-        public TaskItem TaskItem { get; set; } = default!;
+        public TaskItem? TaskItem { get; set; }
+
+        [BindProperty]
+        public TaskUpdate NewUpdate { get; set; } = new();
 
         public List<TaskUpdate> TaskUpdates { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            TaskItem? taskitem = await _context.Tasks
+            TaskItem = await _context.Tasks
                 .Include(t => t.Updates)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(t => t.Id == id);
 
-            if (taskitem is not null)
-            {
-                TaskItem = taskitem;
+            if (TaskItem == null)
+                return NotFound();
 
-                // 👇 Assign Updates list
-                TaskUpdates = taskitem.Updates.OrderByDescending(u => u.Timestamp).ToList();
+            TaskUpdates = TaskItem.Updates
+                .OrderByDescending(u => u.Timestamp)
+                .ToList();
 
-                return Page();
-            }
+            return Page();
+        }
 
-            return NotFound();
+        public async Task<IActionResult> OnPostAddUpdateAsync(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var task = await _context.Tasks
+                .Include(t => t.Updates)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (task == null)
+                return NotFound();
+
+            NewUpdate.Timestamp = DateTime.Now;
+            NewUpdate.TaskItemId = task.Id;
+
+            _context.TaskUpdates.Add(NewUpdate);
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage(new { id = task.Id });
         }
     }
 }

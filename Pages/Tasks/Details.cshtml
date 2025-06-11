@@ -1,15 +1,15 @@
-@page
+@page "{id:int}"
 @model TMS.Pages_Tasks.DetailsModel
 @{
     ViewData["Title"] = "Task Details";
 }
 
-<h1>@Model.TaskItem.Title</h1>
+<h1>@Model.TaskItem?.Title</h1>
 
-<p><strong>Description:</strong> @Model.TaskItem.Description</p>
-<p><strong>Due Date:</strong> @Model.TaskItem.DueDate.ToShortDateString()</p>
-<p><strong>Priority:</strong> @Model.TaskItem.Priority</p>
-<p><strong>Status:</strong> @(Model.TaskItem.IsComplete ? "Completed" : "Not Completed")</p>
+<p><strong>Description:</strong> @Model.TaskItem?.Description</p>
+<p><strong>Due Date:</strong> @Model.TaskItem?.DueDate.ToShortDateString()</p>
+<p><strong>Priority:</strong> @Model.TaskItem?.Priority</p>
+<p><strong>Status:</strong> @(Model.TaskItem?.IsComplete == true ? "Completed" : "Not Completed")</p>
 
 <hr />
 <h3>📝 Updates</h3>
