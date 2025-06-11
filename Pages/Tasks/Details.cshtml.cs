@@ -12,51 +12,39 @@ namespace TMS.Pages_Tasks
 {
     public class DetailsModel : PageModel
     {
-        private readonly AppDbContext _context;
+        private readonly TMS.Data.AppDbContext _context;
 
-        public DetailsModel(AppDbContext context)
+        public DetailsModel(TMS.Data.AppDbContext context)
         {
             _context = context;
         }
 
         public TaskItem TaskItem { get; set; } = default!;
-        public List<TaskUpdate> TaskUpdates { get; set; } = new();
 
-        [BindProperty]
-        public TaskUpdate NewUpdate { get; set; } = new();
+        public List<TaskUpdate> TaskUpdates { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
+            {
                 return NotFound();
+            }
 
             TaskItem? taskitem = await _context.Tasks
                 .Include(t => t.Updates)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (taskitem == null)
-                return NotFound();
+            if (taskitem is not null)
+            {
+                TaskItem = taskitem;
 
-            TaskItem = taskitem;
-            TaskUpdates = taskitem.Updates
-                .OrderByDescending(u => u.Timestamp)
-                .ToList();
+                // 👇 Assign Updates list
+                TaskUpdates = taskitem.Updates.OrderByDescending(u => u.Timestamp).ToList();
 
-            return Page();
-        }
+                return Page();
+            }
 
-        public async Task<IActionResult> OnPostAddUpdateAsync(int? id)
-        {
-            if (id == null || string.IsNullOrWhiteSpace(NewUpdate.content))
-                return RedirectToPage(new { id });
-
-            NewUpdate.TaskItemId = id.Value;
-            NewUpdate.Timestamp = DateTime.Now;
-
-            _context.TaskUpdates.Add(NewUpdate);
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage(new { id }); // Refresh to show new update
+            return NotFound();
         }
     }
 }
