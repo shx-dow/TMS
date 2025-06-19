@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using TMS.Data;
 using TMS.Models;
 
@@ -12,26 +13,41 @@ namespace TMS.Pages_Tasks
 {
     public class CreateModel : PageModel
     {
-        private readonly TMS.Data.AppDbContext _context;
+        private readonly AppDbContext _context;
 
-        public CreateModel(TMS.Data.AppDbContext context)
+        public CreateModel(AppDbContext context)
         {
             _context = context;
-        }
-
-        public IActionResult OnGet()
-        {
-            return Page();
         }
 
         [BindProperty]
         public TaskItem TaskItem { get; set; } = default!;
 
-        // For more information, see https://aka.ms/RazorPagesCRUD.
+        public List<SelectListItem> Users { get; set; } = new();
+
+        public async Task<IActionResult> OnGetAsync()
+        {
+            Users = await _context.AppUsers
+                .Select(u => new SelectListItem
+                {
+                    Value = u.Id.ToString(),
+                    Text = u.Name
+                }).ToListAsync();
+
+            return Page();
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
+                Users = await _context.AppUsers
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.Id.ToString(),
+                        Text = u.Name
+                    }).ToListAsync();
+
                 return Page();
             }
 

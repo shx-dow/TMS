@@ -28,5 +28,8 @@ namespace TMS.Models
         public PriorityLevel Priority { get; set; }
 
         public List<TaskUpdate> Updates { get; set; } = new();
+
+        public int? AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
     }
 }

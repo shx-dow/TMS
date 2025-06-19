@@ -25,8 +25,11 @@ namespace TMS.Pages.Tasks
 
         public async Task OnGetAsync()
         {
-            var tasks = from t in _context.Tasks
-                        select t;
+            int selectedUserId = 1;
+
+            var tasks = _context.Tasks
+                .Include(t => t.AppUser)
+                .Where(t => t.AppUserId == selectedUserId);
 
             if (!string.IsNullOrEmpty(SearchString))
             {
@@ -35,5 +38,6 @@ namespace TMS.Pages.Tasks
 
             TaskItem = await tasks.ToListAsync();
         }
+
     }
 }
