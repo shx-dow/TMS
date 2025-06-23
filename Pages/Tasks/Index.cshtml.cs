@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using TMS.Models;
 using TMS.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TMS.Pages.Tasks
 {
+    [Authorize]
     public class IndexModel : PageModel
     {
         private readonly AppDbContext _context;

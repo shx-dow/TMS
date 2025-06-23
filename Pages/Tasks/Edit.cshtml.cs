@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,6 +12,7 @@ using TMS.Models;
 
 namespace TMS.Pages_Tasks
 {
+    [Authorize]
     public class EditModel : PageModel
     {
         private readonly TMS.Data.AppDbContext _context;
@@ -30,7 +32,7 @@ namespace TMS.Pages_Tasks
                 return NotFound();
             }
 
-            var taskitem =  await _context.Tasks.FirstOrDefaultAsync(m => m.Id == id);
+            var taskitem = await _context.Tasks.FirstOrDefaultAsync(m => m.Id == id);
             if (taskitem == null)
             {
                 return NotFound();
